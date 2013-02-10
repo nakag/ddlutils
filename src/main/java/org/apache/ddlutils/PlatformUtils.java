@@ -33,6 +33,7 @@ import org.apache.ddlutils.platform.cloudscape.CloudscapePlatform;
 import org.apache.ddlutils.platform.db2.Db2Platform;
 import org.apache.ddlutils.platform.derby.DerbyPlatform;
 import org.apache.ddlutils.platform.firebird.FirebirdPlatform;
+import org.apache.ddlutils.platform.h2.H2Platform;
 import org.apache.ddlutils.platform.hsqldb.HsqlDbPlatform;
 import org.apache.ddlutils.platform.interbase.InterbasePlatform;
 import org.apache.ddlutils.platform.mckoi.MckoiPlatform;
@@ -148,6 +149,7 @@ public class PlatformUtils
         jdbcSubProtocolToPlatform.put(DerbyPlatform.JDBC_SUBPROTOCOL,                           DerbyPlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(FirebirdPlatform.JDBC_SUBPROTOCOL,                        FirebirdPlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(HsqlDbPlatform.JDBC_SUBPROTOCOL,                          HsqlDbPlatform.DATABASENAME);
+        jdbcSubProtocolToPlatform.put(H2Platform.JDBC_SUBPROTOCOL,                              H2Platform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(InterbasePlatform.JDBC_SUBPROTOCOL,                       InterbasePlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(SapDbPlatform.JDBC_SUBPROTOCOL,                           SapDbPlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(MckoiPlatform.JDBC_SUBPROTOCOL,                           MckoiPlatform.DATABASENAME);
@@ -194,6 +196,7 @@ public class PlatformUtils
         jdbcDriverToPlatform.put(DerbyPlatform.JDBC_DRIVER,                       DerbyPlatform.DATABASENAME);
         jdbcDriverToPlatform.put(FirebirdPlatform.JDBC_DRIVER,                    FirebirdPlatform.DATABASENAME);
         jdbcDriverToPlatform.put(HsqlDbPlatform.JDBC_DRIVER,                      HsqlDbPlatform.DATABASENAME);
+        jdbcDriverToPlatform.put(H2Platform.JDBC_DRIVER,                          H2Platform.DATABASENAME);
         jdbcDriverToPlatform.put(InterbasePlatform.JDBC_DRIVER,                   InterbasePlatform.DATABASENAME);
         jdbcDriverToPlatform.put(SapDbPlatform.JDBC_DRIVER,                       SapDbPlatform.DATABASENAME);
         jdbcDriverToPlatform.put(MckoiPlatform.JDBC_DRIVER,                       MckoiPlatform.DATABASENAME);

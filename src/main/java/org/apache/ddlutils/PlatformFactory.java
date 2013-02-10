@@ -21,20 +21,23 @@ package org.apache.ddlutils;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.apache.ddlutils.platform.axion.AxionPlatform;
 import org.apache.ddlutils.platform.cloudscape.CloudscapePlatform;
 import org.apache.ddlutils.platform.db2.Db2Platform;
 import org.apache.ddlutils.platform.db2.Db2v8Platform;
 import org.apache.ddlutils.platform.derby.DerbyPlatform;
 import org.apache.ddlutils.platform.firebird.FirebirdPlatform;
+import org.apache.ddlutils.platform.h2.H2Platform;
 import org.apache.ddlutils.platform.hsqldb.HsqlDbPlatform;
 import org.apache.ddlutils.platform.interbase.InterbasePlatform;
 import org.apache.ddlutils.platform.maxdb.MaxDbPlatform;
 import org.apache.ddlutils.platform.mckoi.MckoiPlatform;
 import org.apache.ddlutils.platform.mssql.MSSqlPlatform;
-import org.apache.ddlutils.platform.mysql.MySqlPlatform;
 import org.apache.ddlutils.platform.mysql.MySql50Platform;
+import org.apache.ddlutils.platform.mysql.MySqlPlatform;
 import org.apache.ddlutils.platform.oracle.Oracle10Platform;
 import org.apache.ddlutils.platform.oracle.Oracle8Platform;
 import org.apache.ddlutils.platform.oracle.Oracle9Platform;
@@ -189,6 +192,7 @@ public class PlatformFactory
         addPlatform(_platforms, DerbyPlatform.DATABASENAME,       DerbyPlatform.class);
         addPlatform(_platforms, FirebirdPlatform.DATABASENAME,    FirebirdPlatform.class);
         addPlatform(_platforms, HsqlDbPlatform.DATABASENAME,      HsqlDbPlatform.class);
+        addPlatform(_platforms, H2Platform.DATABASENAME,          H2Platform.class);
         addPlatform(_platforms, InterbasePlatform.DATABASENAME,   InterbasePlatform.class);
         addPlatform(_platforms, MaxDbPlatform.DATABASENAME,       MaxDbPlatform.class);
         addPlatform(_platforms, MckoiPlatform.DATABASENAME,       MckoiPlatform.class);

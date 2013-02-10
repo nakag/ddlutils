@@ -20,13 +20,13 @@ package org.apache.ddlutils.platform;
  */
 
 import junit.framework.TestCase;
-
 import org.apache.ddlutils.PlatformUtils;
 import org.apache.ddlutils.platform.axion.AxionPlatform;
 import org.apache.ddlutils.platform.cloudscape.CloudscapePlatform;
 import org.apache.ddlutils.platform.db2.Db2Platform;
 import org.apache.ddlutils.platform.derby.DerbyPlatform;
 import org.apache.ddlutils.platform.firebird.FirebirdPlatform;
+import org.apache.ddlutils.platform.h2.H2Platform;
 import org.apache.ddlutils.platform.hsqldb.HsqlDbPlatform;
 import org.apache.ddlutils.platform.interbase.InterbasePlatform;
 import org.apache.ddlutils.platform.mckoi.MckoiPlatform;
@@ -192,6 +192,24 @@ public class TestPlatformUtils extends TestCase
     {
         assertEquals(HsqlDbPlatform.DATABASENAME,
                      _platformUtils.determineDatabaseType(null, "jdbc:hsqldb:/opt/db/testdb"));
+    }
+
+    /**
+     * Tests the determination of the H2 platform via its JDBC driver.
+     */
+    public void testH2Driver()
+    {
+        assertEquals(H2Platform.DATABASENAME,
+                     _platformUtils.determineDatabaseType("org.h2.Driver", null));
+    }
+
+    /**
+     * Tests the determination of the H2 platform via JDBC connection urls.
+     */
+    public void testH2Url()
+    {
+        assertEquals(H2Platform.DATABASENAME,
+                     _platformUtils.determineDatabaseType(null, "jdbc:h2:file:/opt/db/testdb"));
     }
 
     /**
