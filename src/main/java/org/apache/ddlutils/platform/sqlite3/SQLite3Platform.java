@@ -89,6 +89,9 @@ public class SQLite3Platform extends PlatformImplBase
         info.setDefaultSize(Types.VARCHAR, Integer.MAX_VALUE);
         info.setDefaultSize(Types.BINARY, Integer.MAX_VALUE);
         info.setDefaultSize(Types.VARBINARY, Integer.MAX_VALUE);
+        
+        info.setForeignKeysEmbedded(true);
+        info.setEmbeddedForeignKeysNamed(false);
 
         setSqlBuilder(new SQLite3Builder(this));
         setModelReader(new SQLite3ModelReader(this));

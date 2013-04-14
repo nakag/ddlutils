@@ -27,8 +27,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.model.Column;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.model.ForeignKey;
 import org.apache.ddlutils.model.Index;
 import org.apache.ddlutils.model.Table;
+import org.apache.ddlutils.platform.CreationParameters;
 import org.apache.ddlutils.platform.SqlBuilder;
 import org.apache.ddlutils.model.ModelException;
 import org.apache.ddlutils.model.TypeMap;
@@ -49,6 +51,31 @@ public class SQLite3Builder extends SqlBuilder
     {
         super(platform);
         addEscapedCharSequence("'", "''");
+    }
+    
+    /**
+     * Outputs the DDL required to drop (if requested) and (re)create all tables in the database model.
+     * 
+     * @param database   The database
+     * @param params     The parameters used in the creation
+     * @param dropTables Whether to drop tables before creating them
+     */
+    public void createTables(Database database, CreationParameters params, boolean dropTables) throws IOException
+    {
+        if (dropTables)
+        {
+            dropTables(database);
+        }
+
+        for (int idx = 0; idx < database.getTableCount(); idx++)
+        {
+            Table table = database.getTable(idx);
+
+            writeTableComment(table);
+            createTable(database,
+                        table,
+                        params == null ? null : params.getParametersFor(table));
+        }
     }
 
     public void dropTable(Table table) throws IOException {
@@ -137,6 +164,10 @@ public class SQLite3Builder extends SqlBuilder
         printEndOfStatement();
     }
     
+    public void dropForeignKey(Table table, ForeignKey foreignKey) throws IOException
+    {
+    }
+    
     protected void writeColumnDefaultValueStmt(Table table, Column column) throws IOException {
         Object parsedDefault = column.getParsedDefaultValue();
 
@@ -178,5 +209,5 @@ public class SQLite3Builder extends SqlBuilder
                 print(defaultValueStr);
             }
         }
-    }    
+    }
 }
