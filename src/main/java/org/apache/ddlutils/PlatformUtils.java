@@ -42,6 +42,7 @@ import org.apache.ddlutils.platform.mysql.MySqlPlatform;
 import org.apache.ddlutils.platform.oracle.Oracle8Platform;
 import org.apache.ddlutils.platform.postgresql.PostgreSqlPlatform;
 import org.apache.ddlutils.platform.sapdb.SapDbPlatform;
+import org.apache.ddlutils.platform.sqlite3.SQLite3Platform;
 import org.apache.ddlutils.platform.sybase.SybasePlatform;
 
 /**
@@ -178,6 +179,7 @@ public class PlatformUtils
         jdbcSubProtocolToPlatform.put(PlatformUtils.JDBC_SUBPROTOCOL_DATADIRECT_ORACLE,         Oracle8Platform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(PlatformUtils.JDBC_SUBPROTOCOL_INET_ORACLE,               Oracle8Platform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(PostgreSqlPlatform.JDBC_SUBPROTOCOL,                      PostgreSqlPlatform.DATABASENAME);
+        jdbcSubProtocolToPlatform.put(SQLite3Platform.JDBC_SUBPROTOCOL,                         SQLite3Platform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(SybasePlatform.JDBC_SUBPROTOCOL,                          SybasePlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(PlatformUtils.JDBC_SUBPROTOCOL_DATADIRECT_SYBASE,         SybasePlatform.DATABASENAME);
         jdbcSubProtocolToPlatform.put(PlatformUtils.JDBC_SUBPROTOCOL_INET_SYBASE,               SybasePlatform.DATABASENAME);
@@ -212,6 +214,7 @@ public class PlatformUtils
         jdbcDriverToPlatform.put(PlatformUtils.JDBC_DRIVER_DATADIRECT_ORACLE,     Oracle8Platform.DATABASENAME);
         jdbcDriverToPlatform.put(PlatformUtils.JDBC_DRIVER_INET_ORACLE,           Oracle8Platform.DATABASENAME);
         jdbcDriverToPlatform.put(PostgreSqlPlatform.JDBC_DRIVER,                  PostgreSqlPlatform.DATABASENAME);
+        jdbcDriverToPlatform.put(SQLite3Platform.JDBC_DRIVER,                     SQLite3Platform.DATABASENAME);
         jdbcDriverToPlatform.put(SybasePlatform.JDBC_DRIVER,                      SybasePlatform.DATABASENAME);
         jdbcDriverToPlatform.put(SybasePlatform.JDBC_DRIVER_OLD,                  SybasePlatform.DATABASENAME);
         jdbcDriverToPlatform.put(PlatformUtils.JDBC_DRIVER_DATADIRECT_SYBASE,     SybasePlatform.DATABASENAME);
