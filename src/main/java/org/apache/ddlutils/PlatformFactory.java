@@ -43,6 +43,7 @@ import org.apache.ddlutils.platform.oracle.Oracle8Platform;
 import org.apache.ddlutils.platform.oracle.Oracle9Platform;
 import org.apache.ddlutils.platform.postgresql.PostgreSqlPlatform;
 import org.apache.ddlutils.platform.sapdb.SapDbPlatform;
+import org.apache.ddlutils.platform.sqlite3.SQLite3Platform;
 import org.apache.ddlutils.platform.sybase.SybaseASE15Platform;
 import org.apache.ddlutils.platform.sybase.SybasePlatform;
 
@@ -204,6 +205,7 @@ public class PlatformFactory
         addPlatform(_platforms, Oracle10Platform.DATABASENAME,    Oracle10Platform.class);
         addPlatform(_platforms, PostgreSqlPlatform.DATABASENAME,  PostgreSqlPlatform.class);
         addPlatform(_platforms, SapDbPlatform.DATABASENAME,       SapDbPlatform.class);
+        addPlatform(_platforms, SQLite3Platform.DATABASENAME,     SQLite3Platform.class);
         addPlatform(_platforms, SybasePlatform.DATABASENAME,      SybasePlatform.class);
         addPlatform(_platforms, SybaseASE15Platform.DATABASENAME, SybaseASE15Platform.class);
     }
