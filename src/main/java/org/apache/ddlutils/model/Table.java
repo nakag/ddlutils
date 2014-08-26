@@ -856,6 +856,7 @@ public class Table implements Serializable
             // TODO: For now we ignore catalog and schema (type should be irrelevant anyways)
             return new EqualsBuilder().append(_name,                     other._name)
                                       .append(_columns,                  other._columns)
+                                      .append(_description,              other._description)
                                       .append(new HashSet(_foreignKeys), new HashSet(other._foreignKeys))
                                       .append(new HashSet(_indices),     new HashSet(other._indices))
                                       .isEquals();
@@ -874,6 +875,7 @@ public class Table implements Serializable
         // TODO: For now we ignore catalog and schema (type should be irrelevant anyways)
         return new HashCodeBuilder(17, 37).append(_name)
                                           .append(_columns)
+                                          .append(_description)
                                           .append(new HashSet(_foreignKeys))
                                           .append(new HashSet(_indices))
                                           .toHashCode();

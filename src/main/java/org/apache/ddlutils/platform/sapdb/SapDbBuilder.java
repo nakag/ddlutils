@@ -247,4 +247,10 @@ public class SapDbBuilder extends SqlBuilder
             print(")");
         }
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

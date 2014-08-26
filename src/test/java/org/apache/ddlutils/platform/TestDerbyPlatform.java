@@ -20,7 +20,11 @@ package org.apache.ddlutils.platform;
  */
 
 import org.apache.ddlutils.TestPlatformBase;
+import org.apache.ddlutils.model.Column;
+import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.platform.derby.DerbyPlatform;
+
+import java.io.IOException;
 
 /**
  * Tests the Derby platform.
@@ -155,5 +159,11 @@ public class TestDerbyPlatform extends TestPlatformBase
             "    PRIMARY KEY (\"COL_PK\")\n"+
             ");\n",
             getCharEscapingTestDatabaseCreationSql());
+    }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
     }
 }

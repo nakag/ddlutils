@@ -266,4 +266,10 @@ public class InterbaseBuilder extends SqlBuilder
         printIdentifier(getColumnName(column));
         printEndOfStatement();
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

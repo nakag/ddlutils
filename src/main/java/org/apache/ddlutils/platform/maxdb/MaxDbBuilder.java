@@ -72,4 +72,10 @@ public class MaxDbBuilder extends SapDbBuilder
         printIdentifier(getForeignKeyName(table, foreignKey));
         printEndOfStatement();
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

@@ -318,4 +318,10 @@ public class FirebirdBuilder extends SqlBuilder
             super.writeCastExpression(sourceColumn, targetColumn);
         }
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ddlutils.PlatformInfo;
@@ -39,7 +40,7 @@ import org.apache.ddlutils.util.StringUtilsExt;
  * adapt the first model so that it becomes the second one. Neither of the models
  * are changed in the process, however, it is also assumed that the models do not
  * change in between.
- * 
+ *
  * @version $Revision: $
  */
 public class ModelComparator
@@ -63,7 +64,7 @@ public class ModelComparator
 
     /**
      * Creates a new model comparator object.
-     * 
+     *
      * @param platformInfo            The platform info
      * @param tableDefChangePredicate The predicate that defines whether tables changes are supported
      *                                by the platform or not; all changes are supported if this is null
@@ -82,7 +83,7 @@ public class ModelComparator
      * Specifies whether the comparator should generate {@link PrimaryKeyChange} objects or a
      * pair of {@link RemovePrimaryKeyChange} and {@link AddPrimaryKeyChange} objects instead.
      * The default value is <code>true</code>.
-     * 
+     *
      * @param generatePrimaryKeyChanges Whether to create {@link PrimaryKeyChange} objects
      */
     public void setGeneratePrimaryKeyChanges(boolean generatePrimaryKeyChanges)
@@ -93,11 +94,11 @@ public class ModelComparator
     /**
      * Specifies whether the {@link RemoveColumnChange} are fine even for primary key columns.
      * If the platform cannot drop primary key columns, set this to <code>false</code> and the
-     * comparator will create additional primary key changes. 
+     * comparator will create additional primary key changes.
      * The default value is <code>true</code>.
-     * 
+     *
      * @param canDropPrimaryKeyColumns Whether {@link RemoveColumnChange} objecs for primary
-     *                                 key columns are ok 
+     *                                 key columns are ok
      */
     public void setCanDropPrimaryKeyColumns(boolean canDropPrimaryKeyColumns)
     {
@@ -106,7 +107,7 @@ public class ModelComparator
 
     /**
      * Returns the info object for the platform.
-     * 
+     *
      * @return The platform info object
      */
     protected PlatformInfo getPlatformInfo()
@@ -116,7 +117,7 @@ public class ModelComparator
 
     /**
      * Determines whether comparison should be case sensitive.
-     * 
+     *
      * @return <code>true</code> if case matters
      */
     protected boolean isCaseSensitive()
@@ -127,7 +128,7 @@ public class ModelComparator
     /**
      * Compares the two models and returns the changes necessary to create the second
      * model from the first one.
-     *  
+     *
      * @param sourceModel The source model
      * @param targetModel The target model
      * @return The changes
@@ -144,7 +145,7 @@ public class ModelComparator
      * the source to the target one. These changes will be applied to the given
      * intermediate model (the other two won't be changed), so that it will be equal to
      * the target model after this model has finished.
-     * 
+     *
      * @param sourceModel       The source model
      * @param intermediateModel The intermediate model to apply the changes to
      * @param targetModel       The target model
@@ -179,7 +180,7 @@ public class ModelComparator
     /**
      * Creates change objects for foreign keys that are present in the given source model but are no longer in the target
      * model, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param intermediateModel The intermediate model to apply the changes to
      * @param targetModel       The target model
@@ -223,7 +224,7 @@ public class ModelComparator
     /**
      * Creates change objects for foreign keys that are not present in the given source model but are in the target
      * model, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param intermediateModel The intermediate model to apply the changes to
      * @param targetModel       The target model
@@ -267,7 +268,7 @@ public class ModelComparator
     /**
      * Creates change objects for tables that are present in the given source model but are no longer in the target
      * model, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param intermediateModel The intermediate model to apply the changes to
      * @param targetModel       The target model
@@ -304,7 +305,7 @@ public class ModelComparator
     /**
      * Creates change objects for tables that are not present in the given source model but are in the target
      * model, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param intermediateModel The intermediate model to apply the changes to
      * @param targetModel       The target model
@@ -344,7 +345,7 @@ public class ModelComparator
     /**
      * Compares the two tables and returns the changes necessary to create the second
      * table from the first one.
-     *  
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to which the changes will be applied incrementally
@@ -410,7 +411,7 @@ public class ModelComparator
                                 (!_caseSensitive && curFks[fkIdx].getForeignTableName().equalsIgnoreCase(intermediateTable.getName())))
                             {
                                 RemoveForeignKeyChange fkChange = new RemoveForeignKeyChange(curTable.getName(), curFks[fkIdx]);
-    
+
                                 changes.add(fkChange);
                                 fkChange.apply(intermediateModel, _caseSensitive);
                             }
@@ -426,15 +427,17 @@ public class ModelComparator
                 tableChange.apply(intermediateModel, _caseSensitive);
             }
         }
-        
+
         changes.addAll(checkForAddedIndexes(sourceModel, sourceTable, intermediateModel, intermediateTable, targetModel, targetTable));
+        changes.addAll(compareComments(intermediateTable, targetTable));
+        changes.addAll(compareColumnComments(intermediateTable, targetTable));
 
         return changes;
     }
 
     /**
      * Returns the names of the columns in the intermediate table corresponding to the given column objects.
-     * 
+     *
      * @param columns           The column objects
      * @param intermediateTable The intermediate table
      * @return The column names
@@ -453,7 +456,7 @@ public class ModelComparator
     /**
      * Creates change objects for indexes that are present in the given source table but are no longer in the target
      * table, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -496,7 +499,7 @@ public class ModelComparator
     /**
      * Creates change objects for indexes that are not present in the given source table but are in the target
      * table, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -540,7 +543,7 @@ public class ModelComparator
     /**
      * Checks for changes in the column order between the given source and target table, creates change objects for these and
      * applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -608,7 +611,7 @@ public class ModelComparator
     /**
      * Creates change objects for columns that are present in the given source table but are no longer in the target
      * table, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -654,7 +657,7 @@ public class ModelComparator
     /**
      * Creates change objects for columns that are not present in the given source table but are in the target
      * table, and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -694,7 +697,7 @@ public class ModelComparator
     /**
      * Creates change objects for columns that have a different in the given source and target table, and applies them
      * to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -733,7 +736,7 @@ public class ModelComparator
 
     /**
      * Creates change objects for primary key differences (primary key added/removed/changed), and applies them to the given intermediate model.
-     * 
+     *
      * @param sourceModel       The source model
      * @param sourceTable       The source table
      * @param intermediateModel The intermediate model to apply the changes to
@@ -806,7 +809,7 @@ public class ModelComparator
                 {
                     PrimaryKeyChange change = new PrimaryKeyChange(intermediateTable.getName(),
                                                                    getIntermediateColumnNamesFor(targetPK, intermediateTable));
-    
+
                     changes.add(change);
                     change.apply(intermediateModel, changePK);
                 }
@@ -826,10 +829,46 @@ public class ModelComparator
         return changes;
     }
 
+    protected List compareComments(Table sourceTable,
+                                   Table targetTable){
+
+        List changes = new ArrayList();
+
+        if(!StringUtils.equals(sourceTable.getDescription(),targetTable.getDescription())){
+            changes.add(new TableCommentChange(targetTable));
+        }
+
+        return changes;
+    }
+
+    protected List compareColumnComments(Table sourceTable,
+                                         Table targetTable){
+        List changes = new ArrayList();
+
+        for(int i = 0; i < sourceTable.getColumnCount(); i++){
+            changes.addAll(compareColumnComments(targetTable, sourceTable.getColumn(i), targetTable.getColumn(i)));
+        }
+
+        return changes;
+    }
+
+    protected List compareColumnComments(Table targetTable,
+                                   Column sourceColumn,
+                                   Column targetColumn){
+
+        List changes = new ArrayList();
+
+        if(!StringUtils.equals(sourceColumn.getDescription(), targetColumn.getDescription())){
+            changes.add(new ColumnCommentChange(targetTable, targetColumn));
+        }
+
+        return changes;
+    }
+
     /**
      * Compares the two columns and returns the change necessary to create the second
      * column from the first one if they differe.
-     *  
+     *
      * @param sourceTable  The source table which contains the source column
      * @param sourceColumn The source column
      * @param targetTable  The target table which contains the target column
@@ -867,8 +906,8 @@ public class ModelComparator
      * has no name, then a foreign key to the same table with the same columns (but not
      * necessarily in the same order) is searched. If the given key has a name, then the
      * corresponding key also needs to have the same name, or no name at all, but not a
-     * different one. 
-     * 
+     * different one.
+     *
      * @param table The table to search in
      * @param fk    The original foreign key
      * @return The corresponding foreign key if found
@@ -892,8 +931,8 @@ public class ModelComparator
      * Searches in the given table for a corresponding index. If the given index
      * has no name, then a index to the same table with the same columns in the
      * same order is searched. If the given index has a name, then the a corresponding
-     * index also needs to have the same name, or no name at all, but not a different one. 
-     * 
+     * index also needs to have the same name, or no name at all, but not a different one.
+     *
      * @param table The table to search in
      * @param index The original index
      * @return The corresponding index if found

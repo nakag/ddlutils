@@ -22,11 +22,7 @@ package org.apache.ddlutils.platform;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ddlutils.alteration.AddColumnChange;
-import org.apache.ddlutils.alteration.AddPrimaryKeyChange;
-import org.apache.ddlutils.alteration.ModelComparator;
-import org.apache.ddlutils.alteration.TableChange;
-import org.apache.ddlutils.alteration.TableDefinitionChangesPredicate;
+import org.apache.ddlutils.alteration.*;
 import org.apache.ddlutils.model.Table;
 
 /**
