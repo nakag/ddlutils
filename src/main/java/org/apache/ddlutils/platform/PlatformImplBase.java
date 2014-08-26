@@ -54,26 +54,7 @@ import org.apache.ddlutils.DatabaseOperationException;
 import org.apache.ddlutils.DdlUtilsException;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformInfo;
-import org.apache.ddlutils.alteration.AddColumnChange;
-import org.apache.ddlutils.alteration.AddForeignKeyChange;
-import org.apache.ddlutils.alteration.AddIndexChange;
-import org.apache.ddlutils.alteration.AddPrimaryKeyChange;
-import org.apache.ddlutils.alteration.AddTableChange;
-import org.apache.ddlutils.alteration.ColumnDefinitionChange;
-import org.apache.ddlutils.alteration.ColumnOrderChange;
-import org.apache.ddlutils.alteration.ForeignKeyChange;
-import org.apache.ddlutils.alteration.IndexChange;
-import org.apache.ddlutils.alteration.ModelChange;
-import org.apache.ddlutils.alteration.ModelComparator;
-import org.apache.ddlutils.alteration.PrimaryKeyChange;
-import org.apache.ddlutils.alteration.RecreateTableChange;
-import org.apache.ddlutils.alteration.RemoveColumnChange;
-import org.apache.ddlutils.alteration.RemoveForeignKeyChange;
-import org.apache.ddlutils.alteration.RemoveIndexChange;
-import org.apache.ddlutils.alteration.RemovePrimaryKeyChange;
-import org.apache.ddlutils.alteration.RemoveTableChange;
-import org.apache.ddlutils.alteration.TableChange;
-import org.apache.ddlutils.alteration.TableDefinitionChangesPredicate;
+import org.apache.ddlutils.alteration.*;
 import org.apache.ddlutils.dynabean.SqlDynaClass;
 import org.apache.ddlutils.dynabean.SqlDynaProperty;
 import org.apache.ddlutils.model.CloneHelper;
@@ -1411,6 +1392,7 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         Table changedTable = findChangedTable(currentModel, change);
 
         getSqlBuilder().addColumn(currentModel, changedTable, change.getNewColumn());
+        getSqlBuilder().createComment(changedTable, change.getNewColumn());
         change.apply(currentModel, isDelimitedIdentifierModeOn());
     }
 
@@ -1436,6 +1418,21 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         }
         getSqlBuilder().createPrimaryKey(changedTable, pkColumns);
         change.apply(currentModel, isDelimitedIdentifierModeOn());
+    }
+
+    public void processChange(Database currentModel,
+                              CreationParameters params,
+                              TableCommentChange change) throws IOException {
+
+        getSqlBuilder().createComment(change.getModifiedTable());
+    }
+
+    protected void processChange(Database model,
+                                 CreationParameters params,
+                                 ColumnCommentChange change) throws IOException {
+
+        Table changedTable = model.findTable(change.getChangedTable());
+        getSqlBuilder().createComment(changedTable, change.getNewColumn());
     }
 
     /**

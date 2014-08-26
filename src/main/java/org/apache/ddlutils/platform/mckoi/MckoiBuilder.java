@@ -177,4 +177,10 @@ public class MckoiBuilder extends SqlBuilder
         print("ALTER ");
         super.createTable(model, table, parameters);
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

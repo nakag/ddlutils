@@ -82,6 +82,7 @@ public class CloneHelper
         result.setSchema(source.getSchema());
         result.setName(source.getName());
         result.setType(source.getType());
+        result.setDescription(source.getDescription());
 
         for (int colIdx = 0; colIdx < source.getColumnCount(); colIdx++)
         {
@@ -125,6 +126,7 @@ public class CloneHelper
         result.setTypeCode(source.getTypeCode());
         result.setSize(source.getSize());
         result.setDefaultValue(source.getDefaultValue());
+        result.setDescription(source.getDescription());
 
         return result;
     }

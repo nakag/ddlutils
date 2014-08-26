@@ -59,4 +59,10 @@ public class CloudscapeBuilder extends SqlBuilder
     {
         return "VALUES IDENTITY_VAL_LOCAL()";
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

@@ -559,6 +559,11 @@ public abstract class SqlBuilder
         {
             createIndexes(table);
         }
+
+        createComment(table);
+        for(int i = 0; i < table.getColumns().length; i++) {
+            createComment(table, table.getColumn(i));
+        }
     }
 
     /**
@@ -2181,5 +2186,28 @@ public abstract class SqlBuilder
     protected String createUniqueIdentifier()
     {
         return new UID().toString().replace(':', '_').replace('-', '_');
+    }
+
+    public void createComment(Table table) throws IOException {
+        print("COMMENT ON TABLE ");
+        printlnIdentifier(getTableName(table));
+        print(" IS ");
+        print("'");
+        print(escapeStringValue(StringUtils.defaultString(table.getDescription())));
+        print("'");
+        printEndOfStatement();
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+        print("COMMENT ON COLUMN ");
+        printIdentifier(getTableName(table));
+        print(".");
+        printlnIdentifier(getColumnName(column));
+        print(" IS ");
+        print("'");
+        print(escapeStringValue(StringUtils.defaultString(column.getDescription())));
+        print("'");
+        printEndOfStatement();
+
     }
 }

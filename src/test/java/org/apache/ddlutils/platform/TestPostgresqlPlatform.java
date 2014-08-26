@@ -78,8 +78,40 @@ public class TestPostgresqlPlatform extends TestPlatformBase
             "    \"COL_TINYINT\"         SMALLINT,\n"+
             "    \"COL_VARBINARY\"       BYTEA,\n"+
             "    \"COL_VARCHAR\"         VARCHAR(15)\n"+
-            ");\n",
-            getColumnTestDatabaseCreationSql());
+            ");\n"+
+            "COMMENT ON TABLE \"coltype\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_ARRAY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BIGINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BIT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BLOB\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BOOLEAN\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_CHAR\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_CLOB\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DATALINK\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DATE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DECIMAL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DECIMAL_NOSCALE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DISTINCT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DOUBLE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_FLOAT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_INTEGER\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_JAVA_OBJECT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_LONGVARBINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_LONGVARCHAR\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_NULL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_NUMERIC\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_OTHER\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_REAL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_REF\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_SMALLINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_STRUCT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TIME\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TIMESTAMP\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TINYINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_VARBINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_VARCHAR\" IS '';\n"
+            ,getColumnTestDatabaseCreationSql());
     }
 
     /**
@@ -102,8 +134,15 @@ public class TestPostgresqlPlatform extends TestPlatformBase
             "    \"COL_DEFAULT\"          CHAR(4) DEFAULT 'test',\n"+
             "    \"COL_AUTO_INCR\"        BIGINT UNIQUE DEFAULT nextval('\"constraints_COL_AUTO_INCR_seq\"'),\n"+
             "    PRIMARY KEY (\"COL_PK\", \"COL_PK_AUTO_INCR\")\n"+
-            ");\n",
-            getConstraintTestDatabaseCreationSql());
+            ");\n"+
+            "COMMENT ON TABLE \"constraints\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_PK_AUTO_INCR\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_NOT_NULL\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_NOT_NULL_DEFAULT\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_DEFAULT\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_AUTO_INCR\" IS '';\n"
+            ,getConstraintTestDatabaseCreationSql());
     }
 
     /**
@@ -128,6 +167,12 @@ public class TestPostgresqlPlatform extends TestPlatformBase
             ");\n"+
             "CREATE INDEX \"testindex1\" ON \"table1\" (\"COL_INDEX_2\");\n"+
             "CREATE UNIQUE INDEX \"testindex2\" ON \"table1\" (\"COL_INDEX_3\", \"COL_INDEX_1\");\n"+
+            "COMMENT ON TABLE \"table1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_PK_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_PK_2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_3\" IS '';\n"+
             "CREATE TABLE \"table2\"\n"+
             "(\n"+
             "    \"COL_PK\"   INTEGER,\n"+
@@ -135,12 +180,19 @@ public class TestPostgresqlPlatform extends TestPlatformBase
             "    \"COL_FK_2\" VARCHAR(32) NOT NULL,\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"table2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_FK_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_FK_2\" IS '';\n"+
             "CREATE TABLE \"table3\"\n"+
             "(\n"+
             "    \"COL_PK\" VARCHAR(16),\n"+
             "    \"COL_FK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"table3\" IS '';\n"+
+            "COMMENT ON COLUMN \"table3\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"table3\".\"COL_FK\" IS '';\n"+
             "ALTER TABLE \"table2\" ADD CONSTRAINT \"table2_FK_COL_F_COL_FK_2_table1\" FOREIGN KEY (\"COL_FK_1\", \"COL_FK_2\") REFERENCES \"table1\" (\"COL_PK_2\", \"COL_PK_1\");\n"+
             "ALTER TABLE \"table3\" ADD CONSTRAINT \"testfk\" FOREIGN KEY (\"COL_FK\") REFERENCES \"table2\" (\"COL_PK\");\n",
             getTableConstraintTestDatabaseCreationSql());
@@ -168,7 +220,10 @@ public class TestPostgresqlPlatform extends TestPlatformBase
             "    \"COL_PK\"   INTEGER,\n"+
             "    \"COL_TEXT\" VARCHAR(128) DEFAULT '\\\' \\t \\n \\r \\\\',\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
-            ");\n",
-            getDatabaseCreationSql(schema));
+            ");\n"+
+            "COMMENT ON TABLE \"escapedcharacters\" IS '';\n"+
+            "COMMENT ON COLUMN \"escapedcharacters\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"escapedcharacters\".\"COL_TEXT\" IS '';\n"
+            ,getDatabaseCreationSql(schema));
     }
 }

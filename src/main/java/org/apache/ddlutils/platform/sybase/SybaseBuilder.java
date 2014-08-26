@@ -542,4 +542,10 @@ public class SybaseBuilder extends SqlBuilder
             printEndOfStatement();
         }
    }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }

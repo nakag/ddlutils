@@ -77,8 +77,40 @@ public class TestOracle8Platform extends TestPlatformBase
             "    \"COL_TINYINT\"         NUMBER(3),\n"+
             "    \"COL_VARBINARY\"       RAW(15),\n"+
             "    \"COL_VARCHAR\"         VARCHAR2(15)\n"+
-            ");\n",
-            getColumnTestDatabaseCreationSql());
+            ");\n"+
+            "COMMENT ON TABLE \"coltype\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_ARRAY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BIGINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BIT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BLOB\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_BOOLEAN\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_CHAR\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_CLOB\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DATALINK\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DATE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DECIMAL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DECIMAL_NOSCALE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DISTINCT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_DOUBLE\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_FLOAT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_INTEGER\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_JAVA_OBJECT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_LONGVARBINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_LONGVARCHAR\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_NULL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_NUMERIC\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_OTHER\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_REAL\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_REF\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_SMALLINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_STRUCT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TIME\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TIMESTAMP\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_TINYINT\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_VARBINARY\" IS '';\n"+
+            "COMMENT ON COLUMN \"coltype\".\"COL_VARCHAR\" IS '';\n"
+            ,getColumnTestDatabaseCreationSql());
     }
 
     /**
@@ -104,6 +136,13 @@ public class TestOracle8Platform extends TestPlatformBase
             "    \"COL_AUTO_INCR\"        NUMBER(38),\n"+
             "    PRIMARY KEY (\"COL_PK\", \"COL_PK_AUTO_INCR\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"constraints\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_PK_AUTO_INCR\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_NOT_NULL\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_NOT_NULL_DEFAULT\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_DEFAULT\" IS '';\n"+
+            "COMMENT ON COLUMN \"constraints\".\"COL_AUTO_INCR\" IS '';\n"+
             "CREATE OR REPLACE TRIGGER \"trg_constraints_L_PK_AUTO_INCR\" BEFORE INSERT ON \"constraints\" FOR EACH ROW WHEN (new.\"COL_PK_AUTO_INCR\" IS NULL)\n"+
             "BEGIN SELECT \"seq_constraints_L_PK_AUTO_INCR\".nextval INTO :new.\"COL_PK_AUTO_INCR\" FROM dual; END;;\n"+
             "CREATE OR REPLACE TRIGGER \"trg_constraints_COL_AUTO_INCR\" BEFORE INSERT ON \"constraints\" FOR EACH ROW WHEN (new.\"COL_AUTO_INCR\" IS NULL)\n"+
@@ -131,6 +170,12 @@ public class TestOracle8Platform extends TestPlatformBase
             ");\n"+
             "CREATE INDEX \"testindex1\" ON \"table1\" (\"COL_INDEX_2\");\n"+
             "CREATE UNIQUE INDEX \"testindex2\" ON \"table1\" (\"COL_INDEX_3\", \"COL_INDEX_1\");\n"+
+            "COMMENT ON TABLE \"table1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_PK_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_PK_2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table1\".\"COL_INDEX_3\" IS '';\n"+
             "CREATE TABLE \"table2\"\n"+
             "(\n"+
             "    \"COL_PK\"   INTEGER,\n"+
@@ -138,12 +183,19 @@ public class TestOracle8Platform extends TestPlatformBase
             "    \"COL_FK_2\" VARCHAR2(32) NOT NULL,\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"table2\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_FK_1\" IS '';\n"+
+            "COMMENT ON COLUMN \"table2\".\"COL_FK_2\" IS '';\n"+
             "CREATE TABLE \"table3\"\n"+
             "(\n"+
             "    \"COL_PK\" VARCHAR2(16),\n"+
             "    \"COL_FK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"table3\" IS '';\n"+
+            "COMMENT ON COLUMN \"table3\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"table3\".\"COL_FK\" IS '';\n"+
             "ALTER TABLE \"table2\" ADD CONSTRAINT \"table2_FK_COL_F_OL_FK_2_table1\" FOREIGN KEY (\"COL_FK_1\", \"COL_FK_2\") REFERENCES \"table1\" (\"COL_PK_2\", \"COL_PK_1\");\n"+
             "ALTER TABLE \"table3\" ADD CONSTRAINT \"testfk\" FOREIGN KEY (\"COL_FK\") REFERENCES \"table2\" (\"COL_PK\");\n",
             getTableConstraintTestDatabaseCreationSql());
@@ -161,7 +213,10 @@ public class TestOracle8Platform extends TestPlatformBase
             "    \"COL_PK\"   INTEGER,\n"+
             "    \"COL_TEXT\" VARCHAR2(128) DEFAULT '\'\'',\n"+
             "    PRIMARY KEY (\"COL_PK\")\n"+
-            ");\n",
-            getCharEscapingTestDatabaseCreationSql());
+            ");\n"+
+            "COMMENT ON TABLE \"escapedcharacters\" IS '';\n"+
+            "COMMENT ON COLUMN \"escapedcharacters\".\"COL_PK\" IS '';\n"+
+            "COMMENT ON COLUMN \"escapedcharacters\".\"COL_TEXT\" IS '';\n"
+            ,getCharEscapingTestDatabaseCreationSql());
     }
 }

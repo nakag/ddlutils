@@ -126,8 +126,215 @@ public class TestAlterationAlgorithm extends TestBase
             "(\n"+
             "    \"COLPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
-            ");\n",
+            ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the creation of comments on a table.
+     */
+    public void testTableCommentCreationOnNewTable() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA' description='comment'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n" +
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "CREATE TABLE \"TableA\"\n"+
+                        "(\n"+
+                        "    \"ColPK\" INTEGER NOT NULL,\n"+
+                        "    PRIMARY KEY (\"ColPK\")\n"+
+                        ");\n"+
+                        "COMMENT ON TABLE \"TableA\" IS 'comment';\n"+
+                        "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the removal of comments on a table.
+     */
+    public void testTableCommentRemovalOnTable() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA' description='comment'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                        "COMMENT ON TABLE \"TableA\" IS '';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the change of comments on a table.
+     */
+    public void testTableCommentChangeOnTable() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA' description='comment'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA' description='different'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "COMMENT ON TABLE \"TableA\" IS 'different';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the creation of comments on an existing table.
+     */
+    public void testTableCommentCreationOnTable() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA' description='comment'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "COMMENT ON TABLE \"TableA\" IS 'comment';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the creation of comments on existing columns.
+     */
+    public void testTableCommentCreationColumn() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' description='comment'/>\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS 'comment';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the removal of comments on existing columns.
+     */
+    public void testTableCommentRemovalOnColumn() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' description='comment' />\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' />\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the change of comments on existing columns.
+     */
+    public void testTableCommentChangeOnColumn() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' description='comment' />\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' description='another comment' />\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS 'another comment';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
+    }
+
+    /**
+     * Tests the creation of comments on new columns.
+     */
+    public void testTableCommentCreationOnNewColumn() throws IOException
+    {
+        final String model1Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true' />\n" +
+                        "  </table>\n" +
+                        "</database>";
+        final String model2Xml =
+                "<?xml version='1.0' encoding='ISO-8859-1'?>\n" +
+                        "<database xmlns='" + DatabaseIO.DDLUTILS_NAMESPACE + "' name='test'>\n" +
+                        "  <table name='TableA'>\n" +
+                        "    <column name='ColPK' type='INTEGER' primaryKey='true' required='true'/>\n" +
+                        "    <column name='Col' type='INTEGER' primaryKey='false' required='false' description='comment'/>\n" +
+                        "  </table>\n"+
+                        "</database>";
+
+        assertEqualsIgnoringWhitespaces(
+                "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" INTEGER;\n"+
+                "COMMENT ON COLUMN \"TableA\".\"Col\" IS 'comment';\n",
+                getAlterModelSQL(model1Xml, model2Xml));
     }
 
     /**
@@ -164,7 +371,10 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COL\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
-            "CREATE INDEX \"TESTINDEX\" ON \"TABLEB\" (\"COL\");\n",
+            "CREATE INDEX \"TESTINDEX\" ON \"TABLEB\" (\"COL\");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS ''\n;"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COL\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -202,7 +412,10 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COL\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
-            "CREATE UNIQUE INDEX \"TESTINDEX\" ON \"TABLEB\" (\"COL\");\n",
+            "CREATE UNIQUE INDEX \"TESTINDEX\" ON \"TABLEB\" (\"COL\");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COL\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -240,6 +453,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
@@ -279,12 +495,18 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColFK\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColFK\" IS '';\n"+
             "CREATE TABLE \"TABLEB\"\n"+
             "(\n"+
             "    \"COLPK\" DOUBLE NOT NULL,\n"+
             "    \"COLFK\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "ALTER TABLE \"TableA\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"ColFK\") REFERENCES \"TABLEB\" (\"COLPK\");\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -625,6 +847,7 @@ public class TestAlterationAlgorithm extends TestBase
 
         assertEqualsIgnoringWhitespaces(
             "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" DOUBLE;\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "ALTER TABLE \"TableA\" ADD CONSTRAINT \"TableA_PK\" PRIMARY KEY (\"ColPK1\",\"ColPK2\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
@@ -657,6 +880,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    \"ColPK2\" VARCHAR(64) NOT NULL\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\", \"ColPK2\") SELECT \"ColPK1\", \"ColPK2\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -664,6 +890,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    \"ColPK2\" VARCHAR(64) NOT NULL\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\", \"ColPK2\") SELECT \"ColPK1\", \"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -691,7 +920,8 @@ public class TestAlterationAlgorithm extends TestBase
             "</database>";
 
         assertEqualsIgnoringWhitespaces(
-            "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" VARCHAR(64);\n",
+            "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" VARCHAR(64);\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -722,6 +952,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -729,6 +961,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -762,6 +996,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -770,6 +1007,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\", \"ColPK2\") SELECT \"ColPK1\", \"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -802,6 +1042,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -809,6 +1051,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -860,6 +1104,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -868,9 +1115,13 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD COLUMN \"COLFK2\" DOUBLE;\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK2\" IS '';\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK1\",\"COLFK2\") REFERENCES \"TableA\" (\"ColPK1\",\"ColPK2\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
@@ -920,6 +1171,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -927,6 +1180,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK1\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\") SELECT \"ColPK1\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE TABLE \"TABLEB_\"\n"+
@@ -935,6 +1190,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK1\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLFK1\" IS '';\n"+
             "INSERT INTO \"TABLEB_\" (\"COLPK\",\"COLFK1\") SELECT \"COLPK\",\"COLFK1\" FROM \"TABLEB\";\n"+
             "DROP TABLE \"TABLEB\";\n"+
             "CREATE TABLE \"TABLEB\"\n"+
@@ -943,6 +1201,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK1\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK1\" IS '';\n"+
             "INSERT INTO \"TABLEB\" (\"COLPK\",\"COLFK1\") SELECT \"COLPK\",\"COLFK1\" FROM \"TABLEB_\";\n"+
             "DROP TABLE \"TABLEB_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK1\") REFERENCES \"TableA\" (\"ColPK1\");\n",
@@ -982,6 +1243,7 @@ public class TestAlterationAlgorithm extends TestBase
         assertEqualsIgnoringWhitespaces(
             "DROP INDEX \"TESTINDEX\" ON \"TableA\";\n"+
             "ALTER TABLE \"TableA\" ADD COLUMN \"Col2\" VARCHAR(64);\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col2\" IS '';\n"+
             "CREATE INDEX \"TESTINDEX\" ON \"TableA\" (\"Col1\",\"Col2\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
@@ -1024,6 +1286,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col1\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col1\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col1\") SELECT \"ColPK\",\"Col1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1032,6 +1297,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col1\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col1\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col1\") SELECT \"ColPK\",\"Col1\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE INDEX \"TESTINDEX\" ON \"TableA\" (\"Col1\");\n",
@@ -1071,6 +1339,7 @@ public class TestAlterationAlgorithm extends TestBase
         assertEqualsIgnoringWhitespaces(
             "DROP INDEX \"TESTINDEX\" ON \"TableA\";\n"+
             "ALTER TABLE \"TableA\" ADD COLUMN \"Col2\" VARCHAR(64);\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col2\" IS '';\n"+
             "CREATE UNIQUE INDEX \"TESTINDEX\" ON \"TableA\" (\"Col1\",\"Col2\");\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
@@ -1113,6 +1382,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col1\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col1\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col1\") SELECT \"ColPK\",\"Col1\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1121,6 +1393,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col1\" DOUBLE,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col1\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col1\") SELECT \"ColPK\",\"Col1\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE UNIQUE INDEX \"TESTINDEX\" ON \"TableA\" (\"Col1\");\n",
@@ -1158,7 +1433,8 @@ public class TestAlterationAlgorithm extends TestBase
             "</database>";
 
         assertEqualsIgnoringWhitespaces(
-            "ALTER TABLE \"TableA\" ADD COLUMN \"Col2\" VARCHAR(64);\n",
+            "ALTER TABLE \"TableA\" ADD COLUMN \"Col2\" VARCHAR(64);\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col2\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -1198,7 +1474,8 @@ public class TestAlterationAlgorithm extends TestBase
             "</database>";
 
         assertEqualsIgnoringWhitespaces(
-            "ALTER TABLE \"TABLEB\" ADD COLUMN \"COL\" DOUBLE;\n",
+            "ALTER TABLE \"TABLEB\" ADD COLUMN \"COL\" DOUBLE;\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COL\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -1240,7 +1517,8 @@ public class TestAlterationAlgorithm extends TestBase
             "</database>";
 
         assertEqualsIgnoringWhitespaces(
-            "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" DOUBLE;\n",
+            "ALTER TABLE \"TableA\" ADD COLUMN \"Col\" DOUBLE;\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n",
             getAlterModelSQL(model1Xml, model2Xml));
     }
 
@@ -1287,6 +1565,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1295,6 +1576,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"Col\",\"ColPK\") SELECT \"Col\",\"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -1330,6 +1614,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1338,6 +1625,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1372,6 +1662,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1380,6 +1673,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1432,6 +1728,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1440,6 +1739,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\",\"ColPK2\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK2\",\"COLFK1\") REFERENCES \"TableA\" (\"ColPK1\",\"ColPK2\");\n",
@@ -1493,6 +1795,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1501,6 +1806,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK2\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK1\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK1\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK2\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK1\",\"ColPK2\") SELECT \"ColPK1\",\"ColPK2\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK2\") REFERENCES \"TableA\" (\"ColPK1\");\n",
@@ -1623,6 +1931,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1630,6 +1940,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -1665,6 +1977,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1673,6 +1988,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1707,6 +2025,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1715,6 +2036,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1755,6 +2079,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1764,6 +2091,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
             "CREATE INDEX \"TestIndex\" ON \"TableA\" (\"Col\");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1810,6 +2140,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1817,6 +2149,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" DOUBLE NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE TABLE \"TABLEB_\"\n"+
@@ -1825,6 +2159,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" DOUBLE,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB_\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB\";\n"+
             "DROP TABLE \"TABLEB\";\n"+
             "CREATE TABLE \"TABLEB\"\n"+
@@ -1833,6 +2170,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" DOUBLE,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB_\";\n"+
             "DROP TABLE \"TABLEB_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -1868,6 +2208,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" VARCHAR(64) NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1876,6 +2219,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" VARCHAR(64) NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1910,6 +2256,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1918,6 +2267,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -1958,6 +2310,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" DECIMAL(15,2) NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -1967,6 +2322,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
             "CREATE INDEX \"TestIndex\" ON \"TableA\" (\"Col\");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2013,6 +2371,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" VARCHAR(64) NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2020,6 +2380,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" VARCHAR(64) NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE TABLE \"TABLEB_\"\n"+
@@ -2028,6 +2390,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB_\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB\";\n"+
             "DROP TABLE \"TABLEB\";\n"+
             "CREATE TABLE \"TABLEB\"\n"+
@@ -2036,6 +2401,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" VARCHAR(64),\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB_\";\n"+
             "DROP TABLE \"TABLEB_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -2071,6 +2439,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" VARCHAR(32) DEFAULT 'test 2' NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2079,6 +2450,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" VARCHAR(32) DEFAULT 'test 2' NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2113,6 +2487,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2121,6 +2498,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2161,6 +2541,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" DATE DEFAULT '2001-02-03' NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2170,6 +2553,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
             "CREATE INDEX \"TestIndex\" ON \"TableA\" (\"Col\");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2216,6 +2602,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER DEFAULT 1 NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2223,6 +2611,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER DEFAULT 1 NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE TABLE \"TABLEB_\"\n"+
@@ -2231,6 +2621,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" INTEGER DEFAULT 0,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB_\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB\";\n"+
             "DROP TABLE \"TABLEB\";\n"+
             "CREATE TABLE \"TABLEB\"\n"+
@@ -2239,6 +2632,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" INTEGER DEFAULT 0,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB_\";\n"+
             "DROP TABLE \"TABLEB_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -2274,6 +2670,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2282,6 +2681,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2316,6 +2718,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2324,6 +2729,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2364,6 +2772,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL IDENTITY,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2373,6 +2784,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
             "CREATE INDEX \"TestIndex\" ON \"TableA\" (\"Col\");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2420,6 +2834,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2427,6 +2843,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",
@@ -2462,6 +2880,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2470,6 +2891,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2504,6 +2928,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2512,6 +2939,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2552,6 +2982,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"Col\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2561,6 +2994,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
             "CREATE INDEX \"TestIndex\" ON \"TableA\" (\"Col\");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"Col\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\",\"Col\") SELECT \"ColPK\",\"Col\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n",
             getAlterModelSQL(model1Xml, model2Xml));
@@ -2608,6 +3044,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA_\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA_\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA\";\n"+
             "DROP TABLE \"TableA\";\n"+
             "CREATE TABLE \"TableA\"\n"+
@@ -2615,6 +3053,8 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"ColPK\" INTEGER NOT NULL,\n"+
             "    PRIMARY KEY (\"ColPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TableA\" IS '';\n"+
+            "COMMENT ON COLUMN \"TableA\".\"ColPK\" IS '';\n"+
             "INSERT INTO \"TableA\" (\"ColPK\") SELECT \"ColPK\" FROM \"TableA_\";\n"+
             "DROP TABLE \"TableA_\";\n"+
             "CREATE TABLE \"TABLEB_\"\n"+
@@ -2623,6 +3063,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB_\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB_\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB_\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB\";\n"+
             "DROP TABLE \"TABLEB\";\n"+
             "CREATE TABLE \"TABLEB\"\n"+
@@ -2631,6 +3074,9 @@ public class TestAlterationAlgorithm extends TestBase
             "    \"COLFK\" INTEGER,\n"+
             "    PRIMARY KEY (\"COLPK\")\n"+
             ");\n"+
+            "COMMENT ON TABLE \"TABLEB\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLPK\" IS '';\n"+
+            "COMMENT ON COLUMN \"TABLEB\".\"COLFK\" IS '';\n"+
             "INSERT INTO \"TABLEB\" (\"COLPK\",\"COLFK\") SELECT \"COLPK\",\"COLFK\" FROM \"TABLEB_\";\n"+
             "DROP TABLE \"TABLEB_\";\n"+
             "ALTER TABLE \"TABLEB\" ADD CONSTRAINT \"TESTFK\" FOREIGN KEY (\"COLFK\") REFERENCES \"TableA\" (\"ColPK\");\n",

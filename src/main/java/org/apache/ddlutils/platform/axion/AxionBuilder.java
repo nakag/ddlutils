@@ -72,4 +72,10 @@ public class AxionBuilder extends SqlBuilder
         printIdentifier(getIndexName(index));
         printEndOfStatement();
     }
+
+    public void createComment(Table table) throws IOException {
+    }
+
+    public void createComment(Table table, Column column) throws IOException {
+    }
 }
